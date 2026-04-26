@@ -84,7 +84,7 @@ const Home = () => {
         transition={{ duration: 0.6 }}
       >
 
-        <h1>Adapt</h1>
+        <h1>Quizora</h1>
         <p className="header-subtitle">
           Learn Smarter, Grow Faster.
         </p>
@@ -320,7 +320,7 @@ const Home = () => {
       )}
 
       <footer className="home-footer">
-        <p>Adapt · AI-Powered Adaptive Learning Companion · Smart revision for the whole semester</p>
+        <p>Quizora · AI-Powered Adaptive Learning Companion · Smart revision for the whole semester</p>
       </footer>
     </div>
   );

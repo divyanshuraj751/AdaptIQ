@@ -26,9 +26,9 @@ const STREAK_JUMP_THRESHOLD = 3;      // consecutive correct/wrong to force band
 const COOLDOWN_AFTER_JUMP = 2;        // questions before another forced jump
 
 export const DIFFICULTY_LEVELS = {
-  easy:   { label: 'Easy',   color: '#10b981', value: 0.2, emoji: '🌱' },
+  easy: { label: 'Easy', color: '#10b981', value: 0.2, emoji: '🌱' },
   medium: { label: 'Medium', color: '#f59e0b', value: 0.5, emoji: '⚡' },
-  hard:   { label: 'Hard',   color: '#ef4444', value: 0.8, emoji: '🔥' },
+  hard: { label: 'Hard', color: '#ef4444', value: 0.8, emoji: '🔥' },
 };
 
 // ── IRT logistic function ──
@@ -55,9 +55,9 @@ export function createSession(topic, opts = {}) {
   const startDifficulty = opts.startDifficulty || 'adaptive';
   // Seed theta so the engine respects the user's chosen starting band.
   const seedTheta = {
-    easy:   -0.9,
-    medium:  0.0,
-    hard:    1.0,
+    easy: -0.9,
+    medium: 0.0,
+    hard: 1.0,
     adaptive: 0.0,
   }[startDifficulty] ?? 0;
   const seedDifficulty = startDifficulty === 'adaptive' ? 'medium' : startDifficulty;
@@ -183,8 +183,8 @@ export function pickNextQuestion(session, questionBank) {
   let cands = topicQ.filter(q => q.difficulty === session.difficulty && !answered.has(q.id));
   if (!cands.length) {
     const order = session.difficulty === 'easy'
-      ? ['medium','hard'] : session.difficulty === 'hard'
-      ? ['medium','easy'] : ['easy','hard'];
+      ? ['medium', 'hard'] : session.difficulty === 'hard'
+        ? ['medium', 'easy'] : ['easy', 'hard'];
     for (const f of order) {
       cands = topicQ.filter(q => q.difficulty === f && !answered.has(q.id));
       if (cands.length) break;
@@ -243,7 +243,7 @@ export function getSessionStats(session) {
     ? +(session.totalTimeSpent / session.questionsAnswered / 1000).toFixed(1) : 0;
   let diffChanges = 0;
   session.history.forEach((e, i) => {
-    if (i > 0 && e.newDifficulty !== session.history[i-1].newDifficulty) diffChanges++;
+    if (i > 0 && e.newDifficulty !== session.history[i - 1].newDifficulty) diffChanges++;
   });
   let maxStreak = 0, cur = 0;
   for (const e of session.history) {

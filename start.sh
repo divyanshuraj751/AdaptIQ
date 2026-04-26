@@ -4,7 +4,7 @@
 # Launches both backend (Gemini API) and frontend (React)
 
 echo "==============================================="
-echo "  AdaptIQ — Adaptive Learning System"
+echo "  Quizora — Adaptive Learning System"
 echo "==============================================="
 
 # ── Kill any stale processes on our ports ──

@@ -8,7 +8,7 @@ const Navbar = () => {
     <nav className="adapt-topnav">
       <Link to="/" className="adapt-brand">
         <BookOpen size={22} />
-        <span>Adapt</span>
+        <span>Quizora</span>
       </Link>
 
       <div className="adapt-nav-actions">
