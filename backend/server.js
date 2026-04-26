@@ -268,6 +268,107 @@ app.post('/api/upload-pdf', (req, res, next) => {
   }
 });
 
+// ── POST /api/smart-revision ──
+app.post('/api/smart-revision', async (req, res) => {
+  const { text, topics = [], filename = 'document' } = req.body;
+
+  if (!text || text.length < 100) {
+    return res.status(400).json({ error: 'PDF text is required and must be at least 100 characters.' });
+  }
+
+  const topicList = topics.length > 0 ? topics.join(', ') : 'the main themes';
+  const truncatedText = text.slice(0, 12000); // Keep within token limits
+
+  const prompt = `You are an expert academic tutor. Analyze the following study material and create comprehensive revision notes.
+
+STUDY MATERIAL:
+"""
+${truncatedText}
+"""
+
+DETECTED TOPICS: ${topicList}
+
+Generate structured revision notes in the following JSON format:
+{
+  "overview": "A 2-3 sentence high-level summary of what this document covers",
+  "keyTakeaways": [
+    "Important point 1",
+    "Important point 2",
+    "Important point 3",
+    "Important point 4",
+    "Important point 5"
+  ],
+  "concepts": [
+    {
+      "term": "Key Term or Concept Name",
+      "definition": "Clear, concise definition (1-2 sentences)",
+      "example": "A practical example or application (optional, can be null)"
+    }
+  ],
+  "topicSummaries": [
+    {
+      "name": "Topic Name",
+      "summary": "2-3 sentence summary of this topic",
+      "points": [
+        "Key detail or fact 1",
+        "Key detail or fact 2",
+        "Key detail or fact 3"
+      ]
+    }
+  ]
+}
+
+RULES:
+- Extract 5-8 key takeaways that a student should remember
+- Identify 6-10 important concepts/terms with clear definitions
+- Create topic summaries for each detected topic (${topicList})
+- Keep definitions concise and student-friendly
+- Include practical examples where possible
+- Focus on understanding, not just memorization
+- All content must come from the provided study material`;
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-8b-instant',
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' },
+        temperature: 0.4,
+        max_tokens: 4096,
+      }),
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error(`Groq API error for smart-revision: ${response.status} - ${errText}`);
+      throw new Error(`AI API returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    const parsed = safeParseJSON(data.choices[0].message.content);
+
+    console.log(`✅ Smart revision generated for "${filename}" — ${parsed.concepts?.length || 0} concepts, ${parsed.topicSummaries?.length || 0} topics`);
+
+    return res.json({
+      success: true,
+      revision: {
+        overview: parsed.overview || 'No overview generated.',
+        keyTakeaways: parsed.keyTakeaways || [],
+        concepts: parsed.concepts || [],
+        topicSummaries: parsed.topicSummaries || [],
+      },
+    });
+  } catch (err) {
+    console.error('Smart revision generation failed:', err.message);
+    return res.status(500).json({ error: 'Failed to generate revision notes. Please try again.' });
+  }
+});
+
 // ── POST /api/generate-from-pdf ──
 app.post('/api/generate-from-pdf', async (req, res) => {
   const { text, numQuestions = 10, difficulty = { easy: 30, medium: 50, hard: 20 }, focusTopics = [], questionTypes = ['MCQ'] } = req.body;

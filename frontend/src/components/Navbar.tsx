@@ -1,35 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/react';
-import ThemeToggle from './ThemeToggle';
-import { Brain } from 'lucide-react';
+import { Show, UserButton } from '@clerk/react';
+import { BookOpen } from 'lucide-react';
 
 const Navbar = () => {
   return (
-    <nav style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      padding: '1rem 2rem',
-      backgroundColor: 'var(--bg-card)',
-      borderBottom: '1px solid var(--border-color)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      backdropFilter: 'blur(10px)',
-      background: 'color-mix(in srgb, var(--bg-card) 80%, transparent)'
-    }}>
-      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', color: 'var(--text-main)', fontWeight: 'bold', fontSize: '1.25rem' }}>
-        <Brain size={24} color="var(--primary)" />
-        <span>AdaptIQ</span>
+    <nav className="adapt-topnav">
+      <Link to="/" className="adapt-brand">
+        <BookOpen size={22} />
+        <span>Adapt</span>
       </Link>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <ThemeToggle />
-        
+      <div className="adapt-nav-actions">
         <Show when="signed-out">
-          <SignInButton />
-          <SignUpButton />
+          <Link to="/sign-in" className="adapt-nav-btn adapt-nav-btn--ghost">Log In</Link>
+          <Link to="/sign-up" className="adapt-nav-btn adapt-nav-btn--primary">Sign Up</Link>
         </Show>
 
         <Show when="signed-in">

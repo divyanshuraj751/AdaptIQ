@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TOPICS } from '../data/questions';
 import { loadSessionHistory, clearSessionHistory } from '../engine/adaptive';
-import { Brain, Calculator, FlaskConical, Code, Globe, Bot, Activity, Zap, BarChart3, ChevronRight, Sparkles, Leaf, Flame, FileUp } from 'lucide-react';
+import { Brain, Calculator, FlaskConical, Code, Globe, Bot, Activity, Zap, BarChart3, ChevronRight, Sparkles, Leaf, Flame, FileUp, BookOpen } from 'lucide-react';
 import PDFUploader from '../components/quiz/PDFUploader';
 import QuizCustomizer from '../components/quiz/QuizCustomizer';
+import SmartRevision from '../components/quiz/SmartRevision';
 
 const topicIcons = {
   mathematics: <Calculator size={24} />,
@@ -25,6 +26,7 @@ const DIFFICULTY_KEY = 'als-start-difficulty';
 
 const Home = () => {
   const navigate = useNavigate();
+  const pdfSectionRef = useRef(null);
   const [history] = useState(loadSessionHistory());
   const [showHistory, setShowHistory] = useState(false);
   const [customTopic, setCustomTopic] = useState('');
@@ -81,8 +83,8 @@ const Home = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="header-badge"><Brain size={16} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-bottom' }}/> AI-Powered Learning</div>
-        <h1>AdaptIQ</h1>
+        <div className="header-badge">AI revision for the whole semester</div>
+        <h1>Adapt</h1>
         <p className="header-subtitle">
           Learn Smarter, Grow Faster.
         </p>
@@ -93,6 +95,32 @@ const Home = () => {
           </div>
         )}
       </motion.header>
+
+      {/* Smart Revision CTA */}
+      <motion.section
+        className="sr-cta-section"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.12, duration: 0.5 }}
+      >
+        <div
+          className="sr-cta-card"
+          onClick={() => pdfSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+          role="button"
+          tabIndex={0}
+        >
+          <div className="sr-cta-icon">
+            <BookOpen size={28} />
+          </div>
+          <div className="sr-cta-body">
+            <h3>Smart Revision</h3>
+            <p>Upload your PDF notes and get AI-generated revision summaries, key concepts, and topic breakdowns — all in one click.</p>
+          </div>
+          <div className="sr-cta-arrow">
+            <ChevronRight size={20} />
+          </div>
+        </div>
+      </motion.section>
 
       {/* Difficulty Selector */}
       <motion.section
@@ -167,6 +195,7 @@ const Home = () => {
       {/* PDF Upload Section */}
       <motion.section
         className="pdf-upload-section"
+        ref={pdfSectionRef}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25, duration: 0.5 }}
@@ -182,6 +211,9 @@ const Home = () => {
           onUploadSuccess={(data) => setPdfData(data)}
           onReset={() => setPdfData(null)}
         />
+        {pdfData && (
+          <SmartRevision pdfData={pdfData} />
+        )}
         {pdfData && (
           <QuizCustomizer
             pdfData={pdfData}
@@ -288,7 +320,7 @@ const Home = () => {
       )}
 
       <footer className="home-footer">
-        <p>Built for Hackathon · AI-Powered Adaptive Engine · Real-time difficulty adjustment</p>
+        <p>Adapt · AI-Powered Adaptive Learning Companion · Smart revision for the whole semester</p>
       </footer>
     </div>
   );

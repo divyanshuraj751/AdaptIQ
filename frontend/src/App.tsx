@@ -11,6 +11,8 @@ import Analytics from "./pages/Analytics.jsx";
 import PDFQuiz from "./pages/PDFQuiz.jsx";
 import PDFResults from "./pages/PDFResults.jsx";
 import NotFound from "./pages/NotFound.tsx";
+import SignInPage from "./pages/SignInPage.tsx";
+import SignUpPage from "./pages/SignUpPage.tsx";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,8 @@ const App = () => (
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/sign-in/*" element={<SignInPage />} />
+          <Route path="/sign-up/*" element={<SignUpPage />} />
           <Route path="/quiz/:topicId" element={<Quiz />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/pdf-quiz" element={<PDFQuiz />} />
